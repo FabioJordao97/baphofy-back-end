@@ -1,5 +1,6 @@
 import express, {Express} from 'express'
 import { AddressInfo } from "net";
+import { postRouter } from './controller/routes/postRouter';
 import { userRouter } from './controller/routes/userRouter';
 
 
@@ -8,6 +9,7 @@ const app: Express = express();
 app.use(express.json());
 
 app.use('/user', userRouter)
+app.use('/post', postRouter)
 
 const server = app.listen(process.env.PORT || 3003, () => {
     if (server) {

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { UserInputDTO } from '../business/entities/User'
+import { LoginInputDTO, UserInputDTO } from '../business/entities/User'
 import { Authenticator } from '../business/services/Authenticator'
 import { HashManager } from '../business/services/HashManager'
 import { IdGenerator } from '../business/services/IdGenerator'
@@ -31,6 +31,23 @@ import { UserDatabase } from '../data/UserDatabase'
 
                 res.status(200).send({token})
 
+            } catch(error){
+                res.status(error.statusCode || 400).send(error.message)
+            }
+        }
+
+        async login(req: Request, res: Response){
+            try{
+                const {email, password} = req.body
+
+                const input: LoginInputDTO ={
+                    email: email,
+                    password: password
+                }
+
+                const token = await userBusiness.insertUser(input)
+
+                res.status(200).send({token})
             } catch(error){
                 res.status(error.statusCode || 400).send(error.message)
             }

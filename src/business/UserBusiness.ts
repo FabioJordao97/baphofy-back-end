@@ -64,7 +64,7 @@ export class UserBusiness {
     async insertUser(user: LoginInputDTO){
             const userDB = await this.userDatabase.getUserByEmail(user.email)
 
-            const comparePassword = await this.hashManager.compare(userDB.password, user.password)
+            const comparePassword = await this.hashManager.compare(user.password, userDB.password)
 
             const token = await this.authenticator.generateToken({id: userDB.id})
 

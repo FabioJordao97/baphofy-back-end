@@ -19,7 +19,7 @@ export class UserDatabase extends BaseDatabase {
       const result = await BaseDatabase.connection
       .select("*")
       .from(UserDatabase.TABLE_NAME)
-      .where(email)
+      .where({email})
 
       return new User(
         result[0].id,

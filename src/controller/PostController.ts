@@ -32,4 +32,29 @@ export class PostController{
             res.status(error.statusCode || 400).send(error.message)
         }
     }
+
+    async getPosts(req: Request, res: Response):Promise<void>{
+        try {
+            const token: string = req.headers.authorization as string
+
+            const result = await postBusiness.getPosts(token)
+
+            res.status(200).send(result)
+        } catch (error) {
+            res.status(error.statusCode || 400).send(error.message)
+        }
+    }
+
+    async getPostById(req: Request, res: Response): Promise<void>{
+        try {
+            const token: string = req.headers.authorization as string
+            const id = req.params.id
+
+            const result = await postBusiness.getPostById(id, token)
+
+            res.status(200).send(result)
+        } catch (error) {
+            res.status(error.statusCode || 400).send(error.message)       
+        }
+    }
 }

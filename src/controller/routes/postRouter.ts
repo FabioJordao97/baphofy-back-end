@@ -6,3 +6,5 @@ export const postRouter = express.Router();
 const postController = new PostController();
 
 postRouter.post('/music', postController.createPost)
+postRouter.get('/music/all', postController.getPosts)
+postRouter.get('/music/:id', postController.getPostById)

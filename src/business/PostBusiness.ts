@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { PostDatabase } from "../data/PostDatabase";
-import { Genre, Post, PostInputDTO } from "./entities/Post";
+import { Genre, Post, PostInputDTO, PostModel, PostFeed } from "./entities/Post";
 import { AuthenticationData } from "./entities/User";
 import { CustomError } from "./error/CustomError";
 import { Authenticator } from "./services/Authenticator";
@@ -10,7 +10,7 @@ export class PostBusiness {
     constructor (
         private idGenerator: IdGenerator,
         private authenticator: Authenticator,
-        private postDatabse: PostDatabase
+        private postDatabase: PostDatabase
     ) { }
 
     async createPost(post: PostInputDTO, token: string){
@@ -45,9 +45,69 @@ export class PostBusiness {
                 tokenData.id
             )
 
-            await this.postDatabse.insertPost(newPost, genre)
+            await this.postDatabase.insertPost(newPost, genre)
 
         } catch(error){
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
+
+    async getPosts(token: string): Promise<PostModel[]>{
+        try {          
+
+            if (!token){
+                throw new CustomError(422, 'Missing property')
+            }
+            const tokenData: AuthenticationData = this.authenticator.getData(token)
+
+            if (!tokenData){
+                throw new CustomError(422, 'Missing property')
+            }
+            const postResult = await this.postDatabase.selectAll()
+
+            if(!postResult){
+                throw new CustomError(404, 'Not found')
+            }     
+            
+            const result = postResult.map((item: PostFeed) => {
+                return {id: item.id, 
+                    title: item.title, 
+                    file: item.file, 
+                    genre: item.genre, 
+                    author_id: item.author_id, 
+                    nickname: item.nickname, 
+                    profilePicture: item.profilePicture}
+            })
+
+            return result
+        } catch(error){
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
+
+    async getPostById(id: string, token: string){
+        try {
+            if (!token){
+                throw new CustomError(422, 'Missing property')
+            }
+            const tokenData: AuthenticationData = this.authenticator.getData(token)
+
+            if (!tokenData){
+                throw new CustomError(422, 'Missing property')
+            }
+
+            if(!id){
+                throw new CustomError(404, 'User not found')
+            }
+
+            const result = await this.postDatabase.selectById(id)
+            if(!result){
+                throw new CustomError(404, "Not Found");
+            }
+
+            return result
+            
+        } catch (error) {
             throw new CustomError(error.statusCode, error.message);
         }
     }

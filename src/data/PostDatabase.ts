@@ -17,7 +17,7 @@ export class PostDatabase extends BaseDatabase {
             post.album,
             post.genre,
             post.author_id,
-            post.name,
+            post.nickname,
             post.profilePicture
         )
     }
